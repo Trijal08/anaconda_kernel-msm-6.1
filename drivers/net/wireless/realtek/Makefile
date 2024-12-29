@@ -10,3 +10,5 @@ obj-$(CONFIG_RTL8XXXU)		+= rtl8xxxu/
 obj-$(CONFIG_RTW88)		+= rtw88/
 obj-$(CONFIG_RTW89)		+= rtw89/
 
+# AirCrack NG Drivers
+obj-$(CONFIG_88XXAU)		+= rtl8812au/
