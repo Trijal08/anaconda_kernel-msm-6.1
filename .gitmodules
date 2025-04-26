@@ -2,3 +2,7 @@
 	path = drivers/net/wireless/realtek/rtl8812au
 	url = https://github.com/Trijal08/rtl8812au.git
 	branch = v5.6.4.2
+[submodule "KernelSU-Next"]
+	path = KernelSU-Next
+	url = https://github.com/pershoot/KernelSU-Next.git
+	branch = next-susfs
