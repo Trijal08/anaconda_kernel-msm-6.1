@@ -305,9 +305,9 @@ static struct pm_qos_constraints cpu_latency_constraints = {
 /**
  * cpu_latency_qos_limit - Return current CPU latency QoS limit.
  */
-s32 cpu_latency_qos_limit(int cpu)
+s32 cpu_latency_qos_limit(void)
 {
-	return READ_ONCE(cpu_latency_constraints.target_per_cpu[cpu]);
+	return pm_qos_read_value(&cpu_latency_constraints);
 }
 
 /**
