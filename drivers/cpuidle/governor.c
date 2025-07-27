@@ -111,7 +111,7 @@ s64 cpuidle_governor_latency_req(unsigned int cpu)
 {
 	struct device *device = get_cpu_device(cpu);
 	int device_req = dev_pm_qos_raw_resume_latency(device);
-	int cpu_req = cpu_latency_qos_limit(cpu);
+	int cpu_req = cpu_latency_qos_limit();
 
 	if (device_req > cpu_req)
 		device_req = cpu_req;
