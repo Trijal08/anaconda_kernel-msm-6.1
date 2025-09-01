@@ -246,10 +246,10 @@ out_rcu:
 
 static void virtio_vsock_rx_fill(struct virtio_vsock *vsock)
 {
-	int buf_len = VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE;
-	struct virtio_vsock_pkt *pkt;
-	struct scatterlist hdr, buf, *sgs[2];
+	int total_len = VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE;
+	struct scatterlist pkt, *p;
 	struct virtqueue *vq;
+	struct sk_buff *skb;
 	int ret;
 
 	vq = vsock->vqs[VSOCK_VQ_RX];
@@ -529,8 +529,9 @@ static void virtio_transport_rx_work(struct work_struct *work)
 	do {
 		virtqueue_disable_cb(vq);
 		for (;;) {
-			struct virtio_vsock_pkt *pkt;
-			unsigned int len;
+			unsigned int len, payload_len;
+			struct virtio_vsock_hdr *hdr;
+			struct sk_buff *skb;
 
 			if (!virtio_transport_more_replies(vsock)) {
 				/* Stop rx until the device processes already
@@ -548,9 +549,16 @@ static void virtio_transport_rx_work(struct work_struct *work)
 			vsock->rx_buf_nr--;
 
 			/* Drop short/long packets */
-			if (unlikely(len < sizeof(pkt->hdr) ||
-				     len > sizeof(pkt->hdr) + pkt->len)) {
-				virtio_transport_free_pkt(pkt);
+			if (unlikely(len < sizeof(*hdr) ||
+				     len > virtio_vsock_skb_len(skb))) {
+				kfree_skb(skb);
+				continue;
+			}
+
+			hdr = virtio_vsock_hdr(skb);
+			payload_len = le32_to_cpu(hdr->len);
+			if (unlikely(payload_len > len - sizeof(*hdr))) {
+				kfree_skb(skb);
 				continue;
 			}
 
