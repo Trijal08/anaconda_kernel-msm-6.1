@@ -36,7 +36,7 @@ obj-y += touch/goodix/
 obj-y += trusty/
 obj-y += uwb/qorvo/qm35/qm35s/
 obj-y += video/gchips/
-obj-y += wlan/bcm4398/
+#obj-y += wlan/bcm4398/
 obj-y += wlan/bcm4383/
 
 # These drivers each have their own unique copy of the gcip driver, which has
